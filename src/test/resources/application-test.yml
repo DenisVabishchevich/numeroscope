@@ -11,3 +11,4 @@ spring:
       enabled: true
 
 SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb
+SERVER_PORT: 0

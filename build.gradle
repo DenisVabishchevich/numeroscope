@@ -47,4 +47,5 @@ tasks.named('test') {
 
 bootJar {
     archiveFileName = "numeroscope.jar"
+    mainClass.set("com.numeroscope.NumeroscopeApplication")
 }
