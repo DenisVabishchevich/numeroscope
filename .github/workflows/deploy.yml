@@ -38,4 +38,4 @@ jobs:
           IMAGE_SHA=${{ github.sha }} 
           IMAGE_NAME="$BASE_IMAGE_NAME:$IMAGE_SHA_SHORT"
           
-          ./gradlew bootBuildImage --imageName=$IMAGE_NAME --publish
+          ./gradlew bootBuildImage --imageName=$IMAGE_NAME --publishImage
