@@ -34,6 +34,8 @@ jobs:
 
       - name: Build and publish Docker image
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:${{ github.sha }}
-          ./gradlew bootBuildImage --imageName=${IMAGE_NAME}
-          docker push ${IMAGE_NAME}
+          BASE_IMAGE_NAME=ghcr.io/$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')
+          IMAGE_SHA=${{ github.sha }} 
+          IMAGE_NAME="$BASE_IMAGE_NAME:$IMAGE_SHA_SHORT"
+          
+          ./gradlew bootBuildImage --imageName=$IMAGE_NAME --publish
