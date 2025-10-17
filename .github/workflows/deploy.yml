@@ -36,6 +36,6 @@ jobs:
         run: |
           BASE_IMAGE_NAME=ghcr.io/$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')
           IMAGE_SHA=${{ github.sha }} 
-          IMAGE_NAME="$BASE_IMAGE_NAME:$IMAGE_SHA_SHORT"
+          IMAGE_NAME="$BASE_IMAGE_NAME:IMAGE_SHA"
           
           ./gradlew bootBuildImage --imageName=$IMAGE_NAME --publishImage
