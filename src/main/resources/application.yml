@@ -10,5 +10,9 @@ spring:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+telegram:
+  bot:
+    username: ${BOT_USERNAME}
+    token: ${BOT_TOKEN}
 server:
   port: ${SERVER_PORT}

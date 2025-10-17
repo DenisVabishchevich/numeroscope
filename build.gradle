@@ -25,6 +25,13 @@ dependencies {
     implementation 'org.springframework.modulith:spring-modulith-starter-core'
     implementation 'org.postgresql:postgresql'
     implementation 'org.liquibase:liquibase-core'
+    implementation "org.telegram:telegrambots-spring-boot-starter:${telegramVersion}"
+    implementation "org.telegram:telegrambots-abilities:${telegramVersion}"
+
+    annotationProcessor("org.projectlombok:lombok")
+
+    compileOnly("org.projectlombok:lombok")
+
     runtimeOnly 'org.springframework.modulith:spring-modulith-actuator'
     runtimeOnly 'org.springframework.modulith:spring-modulith-observability'
 
