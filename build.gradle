@@ -43,9 +43,5 @@ dependencyManagement {
 
 tasks.named('test') {
 	useJUnitPlatform()
-}
-
-bootJar {
-    archiveFileName = "numeroscope.jar"
-    mainClass.set("com.numeroscope.NumeroscopeApplication")
+    jvmArgs "-javaagent:${configurations.testRuntimeClasspath.find { it.name.contains('mockito-core') }}"
 }
