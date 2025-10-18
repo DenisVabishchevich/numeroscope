@@ -22,7 +22,10 @@ class NumeroscopeBot extends AbilityBot {
     private final ResponseHandler responseHandler;
 
     NumeroscopeBot(NumeroscopeProperties properties) {
-        MapDBContext db = new MapDBContext(DBMaker.fileDB("/app/data/numeroscope_bot_db").make());
+        MapDBContext db = new MapDBContext(DBMaker.fileDB("/workspace/data/numeroscope_bot_db")
+                .fileMmapEnable()
+                .checksumHeaderBypass()
+                .make());
         super(properties.getBotToken(), properties.getBotUsername(), db);
         this.responseHandler = new ResponseHandler(silent(), db, properties.getPaymentToken());
     }
