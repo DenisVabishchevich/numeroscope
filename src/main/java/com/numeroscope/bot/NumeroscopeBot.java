@@ -17,11 +17,11 @@ import static org.telegram.abilitybots.api.objects.Locality.USER;
 import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 
 @Component
-class NumeroscopeBot extends AbilityBot {
+public class NumeroscopeBot extends AbilityBot {
 
     private final ResponseHandler responseHandler;
 
-    NumeroscopeBot(NumeroscopeProperties properties) {
+    public NumeroscopeBot(NumeroscopeProperties properties) {
         // TODO use persistent storage
         MapDBContext db = new MapDBContext(DBMaker.heapDB()
 //                .fileMmapEnable()
