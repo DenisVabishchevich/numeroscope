@@ -22,7 +22,8 @@ class NumeroscopeBot extends AbilityBot {
     private final ResponseHandler responseHandler;
 
     NumeroscopeBot(NumeroscopeProperties properties) {
-        MapDBContext db = new MapDBContext(DBMaker.fileDB("/workspace/data/numeroscope_bot_db")
+        // TODO use persistent storage
+        MapDBContext db = new MapDBContext(DBMaker.heapDB()
                 .fileMmapEnable()
                 .checksumHeaderBypass()
                 .make());
