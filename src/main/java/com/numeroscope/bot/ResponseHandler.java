@@ -64,13 +64,13 @@ public class ResponseHandler {
 
     public void pay(MessageContext context) {
         List<LabeledPrice> prices = List.of(
-                new LabeledPrice("Product A", 5000),  // $50.00
-                new LabeledPrice("Shipping", 1000)    // $10.00
+                new LabeledPrice("Product A", 5000),  // 50.00
+                new LabeledPrice("Shipping", 1000)    // 10.00
         );
 
         SendInvoice invoice = SendInvoice.builder()
                 .chatId(context.chatId())
-                .currency("USD")
+                .currency("BYN")
                 .prices(prices)
                 .title("Invoice title")
                 .description("Simple invoice")
