@@ -12,3 +12,6 @@ spring:
 
 SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb
 SERVER_PORT: 0
+NUMERO_BOT_USERNAME: test
+NUMERO_BOT_TOKEN: test-token
+NUMERO_BOT_PAYMENT_TOKEN: test-payment-token

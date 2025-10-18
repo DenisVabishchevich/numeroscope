@@ -12,7 +12,9 @@ spring:
     open-in-view: false
 telegram:
   bot:
-    username: ${BOT_USERNAME}
-    token: ${BOT_TOKEN}
+    numeroscope:
+      bot-username: ${NUMERO_BOT_USERNAME}
+      bot-token: ${NUMERO_BOT_TOKEN}
+      payment-token: ${NUMERO_BOT_PAYMENT_TOKEN}
 server:
   port: ${SERVER_PORT}

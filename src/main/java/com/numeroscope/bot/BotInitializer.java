@@ -12,9 +12,9 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 @Profile("!test")
 @Component
 @RequiredArgsConstructor
-public class BotInitializer implements ApplicationRunner {
+class BotInitializer implements ApplicationRunner {
 
-    public final LongPollingBot bot;
+    final LongPollingBot bot;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {

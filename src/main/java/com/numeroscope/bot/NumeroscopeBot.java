@@ -1,7 +1,6 @@
 package com.numeroscope.bot;
 
 import org.mapdb.DBMaker;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.bot.BaseAbilityBot;
@@ -18,14 +17,14 @@ import static org.telegram.abilitybots.api.objects.Locality.USER;
 import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 
 @Component
-public class NumeroscopeBot extends AbilityBot {
+class NumeroscopeBot extends AbilityBot {
 
     private final ResponseHandler responseHandler;
 
-    public NumeroscopeBot(@Value("${telegram.bot.username}") String botName,
-                          @Value("${telegram.bot.token}") String token) {
-        super(token, botName, new MapDBContext(DBMaker.memoryDB().make()));
-        this.responseHandler = new ResponseHandler(silent(), db());
+    NumeroscopeBot(NumeroscopeProperties properties) {
+        MapDBContext db = new MapDBContext(DBMaker.fileDB("numeroscope_bot_db").make());
+        super(properties.getBotToken(), properties.getBotUsername(), db);
+        this.responseHandler = new ResponseHandler(silent(), db, properties.getPaymentToken());
     }
 
     @Override
@@ -41,6 +40,17 @@ public class NumeroscopeBot extends AbilityBot {
                 .locality(USER)
                 .privacy(PUBLIC)
                 .action(context -> responseHandler.replyToStart(context.chatId()))
+                .build();
+    }
+
+    @SuppressWarnings("unused")
+    public Ability payBot() {
+        return Ability.builder()
+                .name("pay")
+                .info("Pay")
+                .locality(USER)
+                .privacy(PUBLIC)
+                .action(responseHandler::pay)
                 .build();
     }
 
