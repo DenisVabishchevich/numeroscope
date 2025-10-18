@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-class ResponseHandler {
+public class ResponseHandler {
 
     private final SilentSender sender;
     private final Map<Long, UserState> chatStates;
     private final String paymentToken;
 
-    ResponseHandler(SilentSender sender,
+    public ResponseHandler(SilentSender sender,
                     DBContext db,
                     String paymentToken) {
         this.sender = sender;
@@ -29,7 +29,7 @@ class ResponseHandler {
         chatStates = db.getMap("chat_states");
     }
 
-    void replyToStart(Long chatId) {
+    public void replyToStart(Long chatId) {
         chatStates.put(chatId, UserState.STARTED);
         final var message = SendMessage.builder()
                 .chatId(chatId)
@@ -38,7 +38,7 @@ class ResponseHandler {
         sender.execute(message);
     }
 
-    void replyToMessage(Long chatId, Message message) {
+    public void replyToMessage(Long chatId, Message message) {
         echoReply(chatId, message);
     }
 
@@ -52,7 +52,7 @@ class ResponseHandler {
     }
 
 
-    void resetBot(Long chatId) {
+    public void resetBot(Long chatId) {
         chatStates.remove(chatId);
         final var message = SendMessage.builder()
                 .chatId(chatId)
@@ -62,7 +62,7 @@ class ResponseHandler {
 
     }
 
-    void pay(MessageContext context) {
+    public void pay(MessageContext context) {
         List<LabeledPrice> prices = List.of(
                 new LabeledPrice("Product A", 5000),  // $50.00
                 new LabeledPrice("Shipping", 1000)    // $10.00

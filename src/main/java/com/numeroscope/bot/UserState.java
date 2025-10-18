@@ -1,6 +1,6 @@
 package com.numeroscope.bot;
 
-enum UserState {
+public enum UserState {
     STARTED,
     UNKNOWN
 }
