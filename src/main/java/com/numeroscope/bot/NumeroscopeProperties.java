@@ -19,6 +19,4 @@ public class NumeroscopeProperties {
     private final String botUsername;
     @NotEmpty
     private final String botToken;
-    @NotEmpty
-    private final String botImageBaseUrl;
 }
