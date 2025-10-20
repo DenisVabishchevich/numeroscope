@@ -6,7 +6,6 @@ import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.bot.BaseAbilityBot;
 import org.telegram.abilitybots.api.db.MapDBContext;
 import org.telegram.abilitybots.api.objects.Ability;
-import org.telegram.abilitybots.api.objects.Flag;
 import org.telegram.abilitybots.api.objects.Reply;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -85,8 +84,8 @@ public class NumeroscopeBot extends AbilityBot {
         };
 
         // Only trigger for non-command text messages
-        final Predicate<Update> isPlainTextMessage = upd -> !upd.getMessage().getText().startsWith("/");
+        final Predicate<Update> isNotCommand = upd -> !upd.getMessage().getText().startsWith("/");
 
-        return Reply.of(action, Flag.TEXT, isPlainTextMessage);
+        return Reply.of(action, isNotCommand);
     }
 }
