@@ -13,7 +13,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
@@ -24,13 +24,13 @@ import java.util.UUID;
 
 @Entity
 @Table(
-    name = "transaction",
+    name = "item_transaction",
     indexes = {
         @Index(unique = true, name = "transaction_uuid_idx", columnList = "uuid"),
         @Index(unique = true, name = "transaction_item_id_item_type_idx", columnList = "item_id,item_type")
     }
 )
-@Data
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -55,9 +55,6 @@ public class TransactionEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "item_type", nullable = false)
     private ItemType itemType;
-
-    @Column(name = "telegram_name")
-    private String telegramName;
 
     @Column(name = "user_email")
     private String userEmail;

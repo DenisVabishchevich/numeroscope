@@ -12,7 +12,7 @@ public class TransactionEventPublisher {
     private final ApplicationEventPublisher publisher;
 
     @Transactional
-    public void initTransaction(TransactionDto dto) {
+    public void publishTransaction(TransactionDto dto) {
         publisher.publishEvent(dto);
     }
 }

@@ -13,7 +13,6 @@ public class TransactionDto {
 
     TransactionStatus status;
 
-
     public enum TransactionStatus {
         PENDING,
         COMPLETED,

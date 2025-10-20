@@ -1,10 +1,12 @@
 package com.numeroscope.payment;
 
 import com.numeroscope.bot.TransactionDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class TransactionEventListener {
 
     @ApplicationModuleListener

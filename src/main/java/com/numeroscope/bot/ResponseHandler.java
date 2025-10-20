@@ -15,6 +15,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 public class ResponseHandler {
@@ -23,15 +24,18 @@ public class ResponseHandler {
     private final Map<Long, UserState> chatStates;
     private final String paymentToken;
     private final DishRecipeRepository dishRecipeRepository;
+    private final TransactionEventPublisher eventPublisher;
 
     public ResponseHandler(SilentSender sender,
                            DBContext db,
                            String paymentToken,
-                           DishRecipeRepository dishRecipeRepository) {
+                           DishRecipeRepository dishRecipeRepository,
+                           TransactionEventPublisher eventPublisher) {
         this.sender = sender;
         this.paymentToken = paymentToken;
         chatStates = db.getMap("chat_states");
         this.dishRecipeRepository = dishRecipeRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public void replyToStart(Long chatId) {
@@ -73,7 +77,11 @@ public class ResponseHandler {
     }
 
     private void sendInvoice(DishRecipeEntity recipe, Long chatId) {
-        log.info("send invoice for {}", recipe.getUniqueName());
+
+        eventPublisher.publishTransaction(TransactionDto.builder()
+            .status(TransactionDto.TransactionStatus.PENDING)
+            .uuid(UUID.randomUUID())
+            .build());
 
         SendInvoice invoice = SendInvoice.builder()
             .chatId(chatId)

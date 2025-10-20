@@ -21,18 +21,20 @@ public class NumeroscopeBot extends AbilityBot {
     private final ResponseHandler responseHandler;
 
     public NumeroscopeBot(NumeroscopeProperties properties,
-                          DishRecipeRepository dishRecipeRepository) {
+                          DishRecipeRepository dishRecipeRepository,
+                          TransactionEventPublisher eventPublisher) {
         // TODO use persistent storage
         MapDBContext db = new MapDBContext(DBMaker.heapDB()
 //                .fileMmapEnable()
 //                .checksumHeaderBypass()
-                .make());
+            .make());
         super(properties.getBotToken(), properties.getBotUsername(), db);
         this.responseHandler = new ResponseHandler(
-                silent(),
-                db,
-                properties.getBotPaymentToken(),
-                dishRecipeRepository
+            silent(),
+            db,
+            properties.getBotPaymentToken(),
+            dishRecipeRepository,
+            eventPublisher
         );
     }
 
@@ -44,23 +46,23 @@ public class NumeroscopeBot extends AbilityBot {
     @SuppressWarnings("unused")
     public Ability startBot() {
         return Ability.builder()
-                .name("start")
-                .info("Start")
-                .locality(USER)
-                .privacy(PUBLIC)
-                .action(context -> responseHandler.replyToStart(context.chatId()))
-                .build();
+            .name("start")
+            .info("Start")
+            .locality(USER)
+            .privacy(PUBLIC)
+            .action(context -> responseHandler.replyToStart(context.chatId()))
+            .build();
     }
 
     @SuppressWarnings("unused")
     public Ability resetBot() {
         return Ability.builder()
-                .name("reset")
-                .info("Reset")
-                .locality(USER)
-                .privacy(PUBLIC)
-                .action(context -> responseHandler.resetBot(context.chatId()))
-                .build();
+            .name("reset")
+            .info("Reset")
+            .locality(USER)
+            .privacy(PUBLIC)
+            .action(context -> responseHandler.resetBot(context.chatId()))
+            .build();
     }
 
     @SuppressWarnings("unused")

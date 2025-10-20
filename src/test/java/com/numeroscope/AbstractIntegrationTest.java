@@ -16,7 +16,6 @@ import org.testcontainers.utility.DockerImageName;
 @ActiveProfiles("test")
 public abstract class AbstractIntegrationTest {
 
-
     @TestConfiguration(proxyBeanMethods = false)
     public static class TestConfig {
 
