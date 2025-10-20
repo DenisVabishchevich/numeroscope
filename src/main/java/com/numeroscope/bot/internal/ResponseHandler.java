@@ -1,6 +1,8 @@
-package com.numeroscope.bot;
+package com.numeroscope.bot.internal;
 
 
+import com.numeroscope.bot.TransactionDto;
+import com.numeroscope.bot.UserState;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.telegram.abilitybots.api.db.DBContext;

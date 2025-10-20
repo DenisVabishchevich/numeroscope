@@ -1,5 +1,6 @@
-package com.numeroscope.bot;
+package com.numeroscope.bot.internal;
 
+import com.numeroscope.bot.TransactionDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;

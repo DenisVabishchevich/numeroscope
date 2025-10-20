@@ -1,4 +1,4 @@
-package com.numeroscope.bot;
+package com.numeroscope.bot.internal;
 
 import org.mapdb.DBMaker;
 import org.springframework.stereotype.Component;

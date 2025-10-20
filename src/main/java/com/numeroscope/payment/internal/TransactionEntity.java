@@ -1,4 +1,4 @@
-package com.numeroscope.payment;
+package com.numeroscope.payment.internal;
 
 
 import jakarta.persistence.Column;

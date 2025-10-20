@@ -1,6 +1,7 @@
 package com.numeroscope.bot;
 
 import com.numeroscope.AbstractIntegrationTest;
+import com.numeroscope.bot.internal.TransactionEventPublisher;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

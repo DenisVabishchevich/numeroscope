@@ -1,4 +1,4 @@
-package com.numeroscope.bot;
+package com.numeroscope.bot.internal;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

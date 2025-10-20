@@ -1,4 +1,4 @@
-package com.numeroscope.bot;
+package com.numeroscope.bot.internal;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;

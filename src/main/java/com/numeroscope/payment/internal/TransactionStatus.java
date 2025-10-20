@@ -1,4 +1,4 @@
-package com.numeroscope.payment;
+package com.numeroscope.payment.internal;
 
 public enum TransactionStatus {
     PENDING,

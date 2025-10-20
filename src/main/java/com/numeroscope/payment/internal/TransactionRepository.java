@@ -1,4 +1,4 @@
-package com.numeroscope.payment;
+package com.numeroscope.payment.internal;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

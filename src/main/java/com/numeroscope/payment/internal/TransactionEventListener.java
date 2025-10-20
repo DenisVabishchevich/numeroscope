@@ -1,4 +1,4 @@
-package com.numeroscope.payment;
+package com.numeroscope.payment.internal;
 
 import com.numeroscope.bot.TransactionDto;
 import lombok.RequiredArgsConstructor;
