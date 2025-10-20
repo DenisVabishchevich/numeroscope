@@ -1,16 +1,3 @@
-spring:
-  datasource:
-    driverClassName: org.h2.Driver
-  jpa:
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-  h2:
-    console:
-      enabled: true
-
-SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb
 SERVER_PORT: 0
 NUMERO_BOT_USERNAME: test
 NUMERO_BOT_TOKEN: test-token

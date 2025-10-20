@@ -1,5 +1,6 @@
 package com.numeroscope.bot;
 
+import com.numeroscope.bot.repository.DishRecipeRepository;
 import org.mapdb.DBMaker;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
@@ -21,14 +22,20 @@ public class NumeroscopeBot extends AbilityBot {
 
     private final ResponseHandler responseHandler;
 
-    public NumeroscopeBot(NumeroscopeProperties properties) {
+    public NumeroscopeBot(NumeroscopeProperties properties,
+                          DishRecipeRepository dishRecipeRepository) {
         // TODO use persistent storage
         MapDBContext db = new MapDBContext(DBMaker.heapDB()
 //                .fileMmapEnable()
 //                .checksumHeaderBypass()
                 .make());
         super(properties.getBotToken(), properties.getBotUsername(), db);
-        this.responseHandler = new ResponseHandler(silent(), db, properties.getBotPaymentToken());
+        this.responseHandler = new ResponseHandler(
+                silent(),
+                db,
+                properties.getBotPaymentToken(),
+                dishRecipeRepository
+        );
     }
 
     @Override
