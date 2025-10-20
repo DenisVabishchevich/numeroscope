@@ -1,4 +1,4 @@
-package com.numeroscope.bot;
+package com.numeroscope.bot.internal;
 
 public enum UserState {
     STARTED,

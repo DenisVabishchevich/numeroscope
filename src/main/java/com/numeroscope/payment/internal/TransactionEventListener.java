@@ -9,8 +9,18 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TransactionEventListener {
 
+    private final TransactionRepository repository;
+
     @ApplicationModuleListener
     public void handleTransactionEvent(TransactionDto dto) {
-        System.out.println("Received transaction event: " + dto);
+        repository.save(TransactionEntity.builder()
+            .uuid(dto.getUuid())
+            .transactionAmount(dto.getTransactionAmount())
+            .transactionCurrency(dto.getTransactionCurrency())
+            .username(dto.getUsername())
+            .itemId(dto.getItemId())
+            .itemType(ItemType.valueOf(dto.getItemType().name()))
+            .transactionStatus(TransactionStatus.valueOf(dto.getStatus().name()))
+            .build());
     }
 }

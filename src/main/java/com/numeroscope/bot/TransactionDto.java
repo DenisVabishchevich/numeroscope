@@ -10,13 +10,21 @@ import java.util.UUID;
 public class TransactionDto {
 
     UUID uuid;
-
     TransactionStatus status;
+    Long transactionAmount;
+    String transactionCurrency;
+    Long itemId;
+    ItemType itemType;
+    String username;
 
     public enum TransactionStatus {
         PENDING,
         COMPLETED,
         FAILED,
         REFUNDED
+    }
+
+    public enum ItemType {
+        DISH_RECIPE
     }
 }

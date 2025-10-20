@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS item_transaction (
     transaction_currency VARCHAR(3) NOT NULL,
     item_id BIGINT NOT NULL,
     item_type VARCHAR(255) NOT NULL,
-    user_email VARCHAR(255),
+    username VARCHAR(255),
     transaction_status VARCHAR(20) NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL

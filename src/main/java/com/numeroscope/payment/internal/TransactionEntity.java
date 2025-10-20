@@ -56,8 +56,8 @@ public class TransactionEntity {
     @Column(name = "item_type", nullable = false)
     private ItemType itemType;
 
-    @Column(name = "user_email")
-    private String userEmail;
+    @Column(name = "username")
+    private String username;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "transaction_status", nullable = false)

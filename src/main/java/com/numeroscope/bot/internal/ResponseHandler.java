@@ -2,14 +2,12 @@ package com.numeroscope.bot.internal;
 
 
 import com.numeroscope.bot.TransactionDto;
-import com.numeroscope.bot.UserState;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.telegram.abilitybots.api.db.DBContext;
 import org.telegram.abilitybots.api.sender.SilentSender;
 import org.telegram.telegrambots.meta.api.methods.invoices.SendInvoice;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.payments.LabeledPrice;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
@@ -65,33 +63,41 @@ public class ResponseHandler {
         sender.execute(message);
     }
 
-    public void replyToMessage(Long chatId, Message message) {
-        log.info("reply to message {}", message.getText());
+    public void replyToMessage(Update update) {
 
-        final var recipe = message.getText().trim();
+        final var recipe = update.getMessage().getText().trim();
         final var dishRecipeOpt = dishRecipeRepository.findByUniqueName(recipe);
 
         dishRecipeOpt.ifPresentOrElse(
-            r -> sendInvoice(r, chatId),
-            () -> sendAvailableRecipes(chatId)
+            r -> sendInvoice(r, update),
+            () -> sendAvailableRecipes(update.getMessage().getChatId())
         );
 
     }
 
-    private void sendInvoice(DishRecipeEntity recipe, Long chatId) {
+    private void sendInvoice(DishRecipeEntity recipe, Update update) {
+
+        final var transactionId = UUID.randomUUID();
+        final var currency = "USD";
+        final var price = recipe.getPrice();
 
         eventPublisher.publishTransaction(TransactionDto.builder()
             .status(TransactionDto.TransactionStatus.PENDING)
-            .uuid(UUID.randomUUID())
+            .transactionAmount(Long.valueOf(price))
+            .itemId(recipe.getId())
+            .itemType(TransactionDto.ItemType.DISH_RECIPE)
+            .transactionCurrency(currency)
+            .uuid(transactionId)
+            .username(update.getMessage().getFrom().getUserName())
             .build());
 
-        SendInvoice invoice = SendInvoice.builder()
-            .chatId(chatId)
-            .currency("USD")
-            .price(new LabeledPrice(recipe.getUniqueName(), recipe.getPrice()))
+        final var invoice = SendInvoice.builder()
+            .chatId(update.getMessage().getChatId())
+            .currency(currency)
+            .price(new LabeledPrice(recipe.getUniqueName(), price))
             .title(recipe.getUniqueName())
             .description(recipe.getDescription())
-            .payload(RandomStringUtils.insecure().nextAlphabetic(10))
+            .payload(transactionId.toString())
             .photoUrl(recipe.getImageUrl())
             .startParameter("startParameter")
             .photoWidth(512)

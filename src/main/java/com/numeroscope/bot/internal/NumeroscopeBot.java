@@ -68,11 +68,7 @@ public class NumeroscopeBot extends AbilityBot {
     @SuppressWarnings("unused")
     public Reply replyToMessage() {
         final BiConsumer<BaseAbilityBot, Update> action = (BaseAbilityBot abilityBot, Update upd) ->
-        {
-            final var message = upd.getMessage();
-            final var chatId = message.getChatId();
-            responseHandler.replyToMessage(chatId, message);
-        };
+            responseHandler.replyToMessage(upd);
 
         // Only trigger for non-command text messages
         final Predicate<Update> isNotCommand = upd -> !upd.getMessage().getText().startsWith("/");
