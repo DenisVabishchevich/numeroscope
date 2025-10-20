@@ -76,7 +76,7 @@ public class ResponseHandler {
     }
 
     private void sendInvoice(DishRecipeEntity recipe, Long chatId) {
-        log.info("send invoice for {}", recipe.getUniqueName());
+        log.info("send invoice for {} {}, {}",chatId, recipe.getUniqueName(), recipe);
 
         SendInvoice invoice = SendInvoice.builder()
             .chatId(chatId)
@@ -85,11 +85,12 @@ public class ResponseHandler {
             .title("The " + recipe.getUniqueName() + " recipe")
             .description(recipe.getDescription())
             .payload(RandomStringUtils.insecure().nextAlphabetic(10))
+            .photoWidth(128)
+            .photoHeight(128)
             .photoUrl(recipe.getImageUrl())
             .providerToken(paymentToken)
             .needEmail(true)
             .isFlexible(false)
-
             .build();
 
         sender.execute(invoice);
