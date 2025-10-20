@@ -53,17 +53,6 @@ public class NumeroscopeBot extends AbilityBot {
     }
 
     @SuppressWarnings("unused")
-    public Ability payBot() {
-        return Ability.builder()
-                .name("pay")
-                .info("Pay")
-                .locality(USER)
-                .privacy(PUBLIC)
-                .action(responseHandler::pay)
-                .build();
-    }
-
-    @SuppressWarnings("unused")
     public Ability resetBot() {
         return Ability.builder()
                 .name("reset")

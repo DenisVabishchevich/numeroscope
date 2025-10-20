@@ -4,7 +4,6 @@ package com.numeroscope.bot;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.telegram.abilitybots.api.db.DBContext;
-import org.telegram.abilitybots.api.objects.MessageContext;
 import org.telegram.abilitybots.api.sender.SilentSender;
 import org.telegram.telegrambots.meta.api.methods.invoices.SendInvoice;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -12,12 +11,10 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.payments.LabeledPrice;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class ResponseHandler {
@@ -46,16 +43,16 @@ public class ResponseHandler {
     private void sendAvailableRecipes(Long chatId) {
         log.info("send available recipes: {}", chatId);
 
-        final var namePerRow = dishRecipeRepository.findAllUniqueNames()
-            .stream()
-            .map(n -> new KeyboardRow(List.of(new KeyboardButton(n))))
-            .collect(Collectors.toSet());
+        final var keyboardButtons = new KeyboardRow();
+        dishRecipeRepository.findAllUniqueNames()
+            .forEach(keyboardButtons::add);
 
         final var message = SendMessage.builder()
             .chatId(chatId)
-            .text("Choose your dish recipe")
+            .text("Choose your dish")
             .replyMarkup(ReplyKeyboardMarkup.builder()
-                .keyboard(namePerRow)
+                .keyboard(List.of(keyboardButtons))
+                .oneTimeKeyboard(true)
                 .build())
             .build();
 
@@ -82,14 +79,16 @@ public class ResponseHandler {
             .chatId(chatId)
             .currency("USD")
             .price(new LabeledPrice(recipe.getUniqueName(), recipe.getPrice()))
-            .title("The " + recipe.getUniqueName() + " recipe")
+            .title(recipe.getUniqueName())
             .description(recipe.getDescription())
             .payload(RandomStringUtils.insecure().nextAlphabetic(10))
             .photoUrl(recipe.getImageUrl())
             .startParameter("startParameter")
-            .photoWidth(128)
-            .photoHeight(128)
+            .photoWidth(512)
+            .photoHeight(512)
             .providerToken(paymentToken)
+            .maxTipAmount(100_000)
+            .suggestedTipAmounts(List.of(100, 300, 500, 10000))
             .needEmail(true)
             .isFlexible(false)
             .build();
@@ -109,26 +108,5 @@ public class ResponseHandler {
             .build();
         sender.execute(message);
 
-    }
-
-    public void pay(MessageContext context) {
-
-        SendInvoice invoice = SendInvoice.builder()
-            .chatId(context.chatId())
-            .currency("USD")
-            .price(new LabeledPrice("Product A", 5000))
-            .title("Invoice title")
-            .description("Simple invoice")
-            .payload(RandomStringUtils.insecure().nextAlphabetic(10))
-            .startParameter("test-payment")
-            .photoUrl("https://numero-bot-images.eu-central-1.linodeobjects.com/pngtree-funny-smile-icon-image-png-image_14976892.png")
-            .providerToken(paymentToken)
-            .photoWidth(128)
-            .photoHeight(128)
-            .needEmail(true)
-            .isFlexible(false)
-            .build();
-
-        sender.execute(invoice);
     }
 }
