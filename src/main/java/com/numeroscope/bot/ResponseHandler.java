@@ -52,12 +52,12 @@ public class ResponseHandler {
             .collect(Collectors.toSet());
 
         final var message = SendMessage.builder()
-                .chatId(chatId)
+            .chatId(chatId)
             .text("Choose your dish recipe")
             .replyMarkup(ReplyKeyboardMarkup.builder()
                 .keyboard(namePerRow)
                 .build())
-                .build();
+            .build();
 
         sender.execute(message);
     }
@@ -89,29 +89,22 @@ public class ResponseHandler {
             .providerToken(paymentToken)
             .needEmail(true)
             .isFlexible(false)
+
             .build();
 
         sender.execute(invoice);
 
-        clearKeyboard(chatId);
     }
-
-    private void clearKeyboard(Long chatId) {
-        sender.execute(SendMessage.builder()
-            .chatId(chatId)
-            .replyMarkup(ReplyKeyboardRemove.builder()
-                .removeKeyboard(true)
-                .build())
-            .build());
-    }
-
 
     public void resetBot(Long chatId) {
         chatStates.remove(chatId);
         final var message = SendMessage.builder()
-                .chatId(chatId)
-                .text("Your session has been reset.")
-                .build();
+            .chatId(chatId)
+            .text("Your session has been reset.")
+            .replyMarkup(ReplyKeyboardRemove.builder()
+                .removeKeyboard(true)
+                .build())
+            .build();
         sender.execute(message);
 
     }
@@ -119,19 +112,19 @@ public class ResponseHandler {
     public void pay(MessageContext context) {
 
         SendInvoice invoice = SendInvoice.builder()
-                .chatId(context.chatId())
-                .currency("USD")
-                .price(new LabeledPrice("Product A", 5000))
-                .title("Invoice title")
-                .description("Simple invoice")
-                .payload(RandomStringUtils.insecure().nextAlphabetic(10))
-                .startParameter("test-payment")
-                .photoUrl("https://numero-bot-images.eu-central-1.linodeobjects.com/pngtree-funny-smile-icon-image-png-image_14976892.png")
-                .providerToken(paymentToken)
-                .needName(true)
-                .needEmail(true)
-                .isFlexible(false)
-                .build();
+            .chatId(context.chatId())
+            .currency("USD")
+            .price(new LabeledPrice("Product A", 5000))
+            .title("Invoice title")
+            .description("Simple invoice")
+            .payload(RandomStringUtils.insecure().nextAlphabetic(10))
+            .startParameter("test-payment")
+            .photoUrl("https://numero-bot-images.eu-central-1.linodeobjects.com/pngtree-funny-smile-icon-image-png-image_14976892.png")
+            .providerToken(paymentToken)
+            .needName(true)
+            .needEmail(true)
+            .isFlexible(false)
+            .build();
 
         sender.execute(invoice);
     }
