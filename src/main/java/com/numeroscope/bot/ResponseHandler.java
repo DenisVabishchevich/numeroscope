@@ -44,7 +44,7 @@ public class ResponseHandler {
     }
 
     private void sendAvailableRecipes(Long chatId) {
-        log.debug("send available recipes: {}", chatId);
+        log.info("send available recipes: {}", chatId);
 
         final var namePerRow = dishRecipeRepository.findAllUniqueNames()
             .stream()
@@ -63,7 +63,7 @@ public class ResponseHandler {
     }
 
     public void replyToMessage(Long chatId, Message message) {
-        log.debug("reply to message {}", message.getText());
+        log.info("reply to message {}", message.getText());
 
         final var recipe = message.getText().trim();
         final var dishRecipeOpt = dishRecipeRepository.findByUniqueName(recipe);
@@ -76,7 +76,7 @@ public class ResponseHandler {
     }
 
     private void sendInvoice(DishRecipeEntity recipe, Long chatId) {
-        log.debug("send invoice for {}", recipe.getUniqueName());
+        log.info("send invoice for {}", recipe.getUniqueName());
 
         SendInvoice invoice = SendInvoice.builder()
             .chatId(chatId)
