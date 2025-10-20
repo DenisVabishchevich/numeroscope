@@ -85,10 +85,7 @@ public class NumeroscopeBot extends AbilityBot {
         };
 
         // Only trigger for non-command text messages
-        final Predicate<Update> isPlainTextMessage =
-                upd -> upd.hasMessage() &&
-                        upd.getMessage().hasText() &&
-                        !upd.getMessage().getText().startsWith("/");
+        final Predicate<Update> isPlainTextMessage = upd -> !upd.getMessage().getText().startsWith("/");
 
         return Reply.of(action, Flag.TEXT, isPlainTextMessage);
     }

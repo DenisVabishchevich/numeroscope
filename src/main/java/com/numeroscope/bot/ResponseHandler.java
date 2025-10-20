@@ -76,7 +76,7 @@ public class ResponseHandler {
     }
 
     private void sendInvoice(DishRecipeEntity recipe, Long chatId) {
-        log.info("send invoice for {} {}, {}",chatId, recipe.getUniqueName(), recipe);
+        log.info("send invoice for {}", recipe.getUniqueName());
 
         SendInvoice invoice = SendInvoice.builder()
             .chatId(chatId)
