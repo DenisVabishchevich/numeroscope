@@ -1,4 +1,4 @@
-package com.numeroscope.bot.model;
+package com.numeroscope.bot;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DishRecipe {
+public class DishRecipeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

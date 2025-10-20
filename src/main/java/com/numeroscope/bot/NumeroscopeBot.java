@@ -1,6 +1,5 @@
 package com.numeroscope.bot;
 
-import com.numeroscope.bot.repository.DishRecipeRepository;
 import org.mapdb.DBMaker;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;

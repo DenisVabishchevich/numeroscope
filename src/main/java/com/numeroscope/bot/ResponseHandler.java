@@ -1,8 +1,6 @@
 package com.numeroscope.bot;
 
 
-import com.numeroscope.bot.model.DishRecipe;
-import com.numeroscope.bot.repository.DishRecipeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.telegram.abilitybots.api.db.DBContext;
@@ -13,6 +11,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.payments.LabeledPrice;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -45,6 +44,8 @@ public class ResponseHandler {
     }
 
     private void sendAvailableRecipes(Long chatId) {
+        log.debug("send available recipes: {}", chatId);
+
         final var namePerRow = dishRecipeRepository.findAllUniqueNames()
             .stream()
             .map(n -> new KeyboardRow(List.of(new KeyboardButton(n))))
@@ -62,6 +63,8 @@ public class ResponseHandler {
     }
 
     public void replyToMessage(Long chatId, Message message) {
+        log.debug("reply to message {}", message.getText());
+
         final var recipe = message.getText().trim();
         final var dishRecipeOpt = dishRecipeRepository.findByUniqueName(recipe);
 
@@ -72,7 +75,9 @@ public class ResponseHandler {
 
     }
 
-    private void sendInvoice(DishRecipe recipe, Long chatId) {
+    private void sendInvoice(DishRecipeEntity recipe, Long chatId) {
+        log.debug("send invoice for {}", recipe.getUniqueName());
+
         SendInvoice invoice = SendInvoice.builder()
             .chatId(chatId)
             .currency("USD")
@@ -87,6 +92,17 @@ public class ResponseHandler {
             .build();
 
         sender.execute(invoice);
+
+        clearKeyboard(chatId);
+    }
+
+    private void clearKeyboard(Long chatId) {
+        sender.execute(SendMessage.builder()
+            .chatId(chatId)
+            .replyMarkup(ReplyKeyboardRemove.builder()
+                .removeKeyboard(true)
+                .build())
+            .build());
     }
 
 
