@@ -19,3 +19,7 @@ telegram:
       bot-image-base-url: "test"
 server:
   port: ${SERVER_PORT}
+logging:
+  level:
+    root: INFO
+    org.telegram.abilitybots: DEBUG
