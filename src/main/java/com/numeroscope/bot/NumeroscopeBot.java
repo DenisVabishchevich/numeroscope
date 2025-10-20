@@ -28,7 +28,7 @@ public class NumeroscopeBot extends AbilityBot {
 //                .checksumHeaderBypass()
                 .make());
         super(properties.getBotToken(), properties.getBotUsername(), db);
-        this.responseHandler = new ResponseHandler(silent(), db, properties.getPaymentToken());
+        this.responseHandler = new ResponseHandler(silent(), db, properties.getBotPaymentToken());
     }
 
     @Override

@@ -14,9 +14,11 @@ import org.springframework.validation.annotation.Validated;
 public class NumeroscopeProperties {
 
     @NotEmpty
-    private final String paymentToken;
+    private final String botPaymentToken;
     @NotEmpty
     private final String botUsername;
     @NotEmpty
     private final String botToken;
+    @NotEmpty
+    private final String botImageBaseUrl;
 }

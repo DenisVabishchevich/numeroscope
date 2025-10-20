@@ -76,6 +76,7 @@ public class ResponseHandler {
                 .description("Simple invoice")
                 .payload(RandomStringUtils.insecure().nextAlphabetic(10))
                 .startParameter("test-payment")
+                .photoUrl("https://numero-bot-images.eu-central-1.linodeobjects.com/pngtree-funny-smile-icon-image-png-image_14976892.png")
                 .providerToken(paymentToken)
                 .needName(true)
                 .needEmail(true)
