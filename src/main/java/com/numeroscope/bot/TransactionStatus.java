@@ -1,7 +1,8 @@
 package com.numeroscope.bot;
 
 public enum TransactionStatus {
-    PENDING,
+    NEW,
+    PRE_CHECKOUT,
     COMPLETED,
     FAILED,
     REFUNDED

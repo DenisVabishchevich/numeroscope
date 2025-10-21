@@ -1,9 +1,14 @@
 package com.numeroscope.bot.internal;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.numeroscope.bot.TransactionDto;
 import com.numeroscope.bot.TransactionStatus;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.telegram.abilitybots.api.db.DBContext;
 import org.telegram.abilitybots.api.sender.SilentSender;
 import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery;
@@ -18,6 +23,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class ResponseHandler {
@@ -27,27 +33,29 @@ public class ResponseHandler {
     private final String paymentToken;
     private final DishRecipeRepository dishRecipeRepository;
     private final TransactionEventPublisher eventPublisher;
+    private final ObjectMapper mapper;
 
     public ResponseHandler(SilentSender sender,
                            DBContext db,
                            String paymentToken,
                            DishRecipeRepository dishRecipeRepository,
-                           TransactionEventPublisher eventPublisher) {
+                           TransactionEventPublisher eventPublisher,
+                           ObjectMapper mapper) {
         this.sender = sender;
         this.paymentToken = paymentToken;
         chatStates = db.getMap("chat_states");
         this.dishRecipeRepository = dishRecipeRepository;
         this.eventPublisher = eventPublisher;
+        this.mapper = mapper;
     }
 
-    public void replyToStart(Long chatId) {
+    public void start(Long chatId) {
 
         sendAvailableRecipes(chatId);
         chatStates.put(chatId, UserState.STARTED);
     }
 
     private void sendAvailableRecipes(Long chatId) {
-        log.info("send available recipes: {}", chatId);
 
         final var keyboardButtons = new KeyboardRow();
         dishRecipeRepository.findAllUniqueNames()
@@ -84,7 +92,7 @@ public class ResponseHandler {
         final var price = recipe.getPrice();
 
         eventPublisher.publishTransaction(TransactionDto.builder()
-            .status(TransactionStatus.PENDING)
+            .status(TransactionStatus.NEW)
             .transactionAmount(Long.valueOf(price))
             .itemId(recipe.getId())
             .transactionCurrency(currency)
@@ -114,7 +122,7 @@ public class ResponseHandler {
 
     }
 
-    public void resetBot(Long chatId) {
+    public void reset(Long chatId) {
         chatStates.remove(chatId);
         final var message = SendMessage.builder()
             .chatId(chatId)
@@ -127,9 +135,24 @@ public class ResponseHandler {
 
     }
 
-    public void replyToPreCheckout(Update upd) {
+    public void preCheckout(Update upd) {
 
         final var queryId = upd.getPreCheckoutQuery().getId();
+        final var currency = upd.getPreCheckoutQuery().getCurrency();
+        final var totalAmount = upd.getPreCheckoutQuery().getTotalAmount();
+        final var username = upd.getPreCheckoutQuery().getFrom().getUserName();
+        final var payload = upd.getPreCheckoutQuery().getInvoicePayload();
+        final var dishId = payload.split(";")[1];
+        final var transactionId = payload.split(";")[0];
+
+        eventPublisher.publishTransaction(TransactionDto.builder()
+            .status(TransactionStatus.PRE_CHECKOUT)
+            .transactionAmount(Long.valueOf(totalAmount))
+            .itemId(Long.valueOf(dishId))
+            .transactionCurrency(currency)
+            .uuid(UUID.fromString(transactionId))
+            .username(username)
+            .build());
 
         final var query = AnswerPreCheckoutQuery.builder()
             .preCheckoutQueryId(queryId)
@@ -139,26 +162,59 @@ public class ResponseHandler {
         sender.execute(query);
     }
 
-    public void replyToSuccessPayment(Update upd) {
+    @SneakyThrows
+    public void successPayment(Update upd) {
         final var chatId = upd.getMessage().getChatId();
         final var payload = upd.getMessage().getSuccessfulPayment().getInvoicePayload();
         final var dishId = payload.split(";")[1];
         final var transactionId = payload.split(";")[0];
+        final var currency = upd.getMessage().getSuccessfulPayment().getCurrency();
+        final var totalAmount = upd.getMessage().getSuccessfulPayment().getTotalAmount();
+        final var username = upd.getMessage().getFrom().getUserName();
 
-        eventPublisher.updateTransactionStatus(transactionId, TransactionStatus.COMPLETED);
+        eventPublisher.publishTransaction(TransactionDto.builder()
+            .status(TransactionStatus.COMPLETED)
+            .transactionAmount(Long.valueOf(totalAmount))
+            .itemId(Long.valueOf(dishId))
+            .transactionCurrency(currency)
+            .uuid(UUID.fromString(transactionId))
+            .username(username)
+            .build());
 
         final var dishRecipeEntity = dishRecipeRepository.findById(Long.valueOf(dishId))
             .orElseThrow(() -> new IllegalStateException("Dish not found"));
 
+        final var messageText = buildRecipeMessage(dishRecipeEntity);
+
         final var message = SendMessage.builder()
             .chatId(chatId)
-            .text(
-                "Ingredients:" + System.lineSeparator() + dishRecipeEntity.getIngredients() + System.lineSeparator() +
-                "Recipe:" + System.lineSeparator() + dishRecipeEntity.getRecipe()
-            )
+            .text(messageText)
             .parseMode("Markdown")
             .build();
 
         sender.execute(message);
+    }
+
+    @NotNull
+    private String buildRecipeMessage(DishRecipeEntity dishRecipeEntity) throws JsonProcessingException {
+        final var ingredientsMap = mapper.readValue(
+            dishRecipeEntity.getIngredients(),
+            new TypeReference<Map<String, Object>>() {
+            }
+        );
+
+        final var formattedIngredients = ingredientsMap.entrySet().stream()
+            .map(entry -> "- *" + entry.getKey() + "*: " + entry.getValue())
+            .collect(Collectors.joining(System.lineSeparator()));
+
+        final var recipeText = dishRecipeEntity.getRecipe();
+
+        return """
+            *🍽️ Ingredients:*
+            %s
+            
+            *👩‍🍳 Recipe:*
+            %s
+            """.formatted(formattedIngredients, recipeText);
     }
 }

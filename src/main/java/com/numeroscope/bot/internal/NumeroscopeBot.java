@@ -1,5 +1,6 @@
 package com.numeroscope.bot.internal;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mapdb.DBMaker;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
@@ -23,7 +24,8 @@ public class NumeroscopeBot extends AbilityBot {
 
     public NumeroscopeBot(NumeroscopeProperties properties,
                           DishRecipeRepository dishRecipeRepository,
-                          TransactionEventPublisher eventPublisher) {
+                          TransactionEventPublisher eventPublisher,
+                          ObjectMapper mapper) {
         // TODO use persistent storage
         MapDBContext db = new MapDBContext(DBMaker.heapDB()
 //                .fileMmapEnable()
@@ -35,7 +37,8 @@ public class NumeroscopeBot extends AbilityBot {
             db,
             properties.getBotPaymentToken(),
             dishRecipeRepository,
-            eventPublisher
+            eventPublisher,
+            mapper
         );
     }
 
@@ -51,7 +54,7 @@ public class NumeroscopeBot extends AbilityBot {
             .info("Start")
             .locality(USER)
             .privacy(PUBLIC)
-            .action(context -> responseHandler.replyToStart(context.chatId()))
+            .action(context -> responseHandler.start(context.chatId()))
             .build();
     }
 
@@ -62,7 +65,7 @@ public class NumeroscopeBot extends AbilityBot {
             .info("Reset")
             .locality(USER)
             .privacy(PUBLIC)
-            .action(context -> responseHandler.resetBot(context.chatId()))
+            .action(context -> responseHandler.reset(context.chatId()))
             .build();
     }
 
@@ -81,7 +84,7 @@ public class NumeroscopeBot extends AbilityBot {
     @SuppressWarnings("unused")
     public Reply replyToPreCheckout() {
         final BiConsumer<BaseAbilityBot, Update> action = (BaseAbilityBot abilityBot, Update upd) ->
-            responseHandler.replyToPreCheckout(upd);
+            responseHandler.preCheckout(upd);
 
         return Reply.of(action, Flag.PRECHECKOUT_QUERY);
     }
@@ -89,7 +92,7 @@ public class NumeroscopeBot extends AbilityBot {
     @SuppressWarnings("unused")
     public Reply replyToSuccessPayment() {
         final BiConsumer<BaseAbilityBot, Update> action = (BaseAbilityBot abilityBot, Update upd) ->
-            responseHandler.replyToSuccessPayment(upd);
+            responseHandler.successPayment(upd);
 
         final Predicate<Update> isNotCommand = upd -> upd.getMessage().hasSuccessfulPayment();
 

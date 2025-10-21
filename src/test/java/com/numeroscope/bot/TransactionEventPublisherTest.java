@@ -11,7 +11,7 @@ import org.springframework.modulith.test.Scenario;
 import java.time.Duration;
 import java.util.UUID;
 
-import static com.numeroscope.bot.TransactionDto.TransactionStatus.PENDING;
+import static com.numeroscope.bot.TransactionStatus.NEW;
 
 @ApplicationModuleTest
 class TransactionEventPublisherTest extends AbstractIntegrationTest {
@@ -24,7 +24,7 @@ class TransactionEventPublisherTest extends AbstractIntegrationTest {
         // Arrange
         TransactionDto dto = TransactionDto.builder()
             .uuid(UUID.randomUUID())
-            .status(PENDING)
+            .status(NEW)
             .build();
 
         // Act and Assert
@@ -32,7 +32,7 @@ class TransactionEventPublisherTest extends AbstractIntegrationTest {
             .andWaitAtMost(Duration.ofSeconds(5))
             .forEventOfType(TransactionDto.class)
             .toArriveAndVerify(event -> {
-                Assertions.assertThat(event.getStatus()).isEqualTo(PENDING);
+                Assertions.assertThat(event.getStatus()).isEqualTo(NEW);
                 Assertions.assertThat(event.getUuid()).isEqualTo(dto.getUuid());
             });
 

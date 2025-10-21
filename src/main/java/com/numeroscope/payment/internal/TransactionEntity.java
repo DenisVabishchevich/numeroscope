@@ -10,13 +10,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -27,7 +27,7 @@ import java.util.UUID;
 @Table(
     name = "item_transaction",
     indexes = {
-        @Index(unique = true, name = "transaction_uuid_idx", columnList = "uuid"),
+        @Index(unique = true, name = "transaction_uuid_status_idx", columnList = "uuid,transaction_status"),
         @Index(unique = true, name = "transaction_item_id_idx", columnList = "item_id")
     }
 )
@@ -65,8 +65,9 @@ public class TransactionEntity {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
+    @PreUpdate
+    public void preUpdate() {
+        throw new IllegalStateException("TransactionEntity cannot be updated");
+    }
 }
 
