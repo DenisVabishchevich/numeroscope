@@ -6,6 +6,7 @@ import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.bot.BaseAbilityBot;
 import org.telegram.abilitybots.api.db.MapDBContext;
 import org.telegram.abilitybots.api.objects.Ability;
+import org.telegram.abilitybots.api.objects.Flag;
 import org.telegram.abilitybots.api.objects.Reply;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -70,9 +71,28 @@ public class NumeroscopeBot extends AbilityBot {
         final BiConsumer<BaseAbilityBot, Update> action = (BaseAbilityBot abilityBot, Update upd) ->
             responseHandler.replyToMessage(upd);
 
-        // Only trigger for non-command text messages
-        final Predicate<Update> isNotCommand = upd -> !upd.getMessage().getText().startsWith("/");
+        return Reply.of(action, Flag.MESSAGE, notSlashMessage());
+    }
 
-        return Reply.of(action, isNotCommand);
+    private Predicate<Update> notSlashMessage() {
+        return upd -> upd.hasMessage() && upd.getMessage().hasText() && !upd.getMessage().getText().startsWith("/");
+    }
+
+    @SuppressWarnings("unused")
+    public Reply replyToPreCheckout() {
+        final BiConsumer<BaseAbilityBot, Update> action = (BaseAbilityBot abilityBot, Update upd) ->
+            responseHandler.replyToPreCheckout(upd);
+
+        return Reply.of(action, Flag.PRECHECKOUT_QUERY);
+    }
+
+    @SuppressWarnings("unused")
+    public Reply replyToSuccessPayment() {
+        final BiConsumer<BaseAbilityBot, Update> action = (BaseAbilityBot abilityBot, Update upd) ->
+            responseHandler.replyToSuccessPayment(upd);
+
+        final Predicate<Update> isNotCommand = upd -> upd.getMessage().hasSuccessfulPayment();
+
+        return Reply.of(action, Flag.MESSAGE, isNotCommand);
     }
 }

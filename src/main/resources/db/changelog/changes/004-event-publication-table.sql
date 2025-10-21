@@ -1,7 +1,6 @@
 --liquibase formatted sql
 
 --changeset DenisV:004-event-publication-table
-
 CREATE TABLE IF NOT EXISTS event_publication
 (
     id               UUID NOT NULL,

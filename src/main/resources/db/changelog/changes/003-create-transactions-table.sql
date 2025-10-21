@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS item_transaction (
     transaction_amount BIGINT NOT NULL,
     transaction_currency VARCHAR(3) NOT NULL,
     item_id BIGINT NOT NULL,
-    item_type VARCHAR(255) NOT NULL,
     username VARCHAR(255),
     transaction_status VARCHAR(20) NOT NULL,
     created_at TIMESTAMP NOT NULL,
@@ -15,4 +14,4 @@ CREATE TABLE IF NOT EXISTS item_transaction (
 );
 
 CREATE UNIQUE INDEX transaction_uuid_idx ON item_transaction (uuid);
-CREATE UNIQUE INDEX transaction_item_id_item_type_idx ON item_transaction (item_id, item_type);
+CREATE INDEX transaction_item_id_idx ON item_transaction (item_id);

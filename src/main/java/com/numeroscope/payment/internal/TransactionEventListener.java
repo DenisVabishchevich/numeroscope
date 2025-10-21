@@ -1,6 +1,7 @@
 package com.numeroscope.payment.internal;
 
 import com.numeroscope.bot.TransactionDto;
+import com.numeroscope.bot.TransactionStatusUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
@@ -19,8 +20,16 @@ public class TransactionEventListener {
             .transactionCurrency(dto.getTransactionCurrency())
             .username(dto.getUsername())
             .itemId(dto.getItemId())
-            .itemType(ItemType.valueOf(dto.getItemType().name()))
             .transactionStatus(TransactionStatus.valueOf(dto.getStatus().name()))
             .build());
+    }
+
+    @ApplicationModuleListener
+    public void handleTransactionEvent(TransactionStatusUpdateDto dto) {
+        repository.findByUuid(dto.getUuid())
+            .ifPresent(t -> {
+                t.setTransactionStatus(TransactionStatus.valueOf(dto.getStatus().name()));
+                repository.save(t);
+            });
     }
 }

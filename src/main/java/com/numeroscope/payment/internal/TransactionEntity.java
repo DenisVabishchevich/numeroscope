@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -27,9 +28,10 @@ import java.util.UUID;
     name = "item_transaction",
     indexes = {
         @Index(unique = true, name = "transaction_uuid_idx", columnList = "uuid"),
-        @Index(unique = true, name = "transaction_item_id_item_type_idx", columnList = "item_id,item_type")
+        @Index(unique = true, name = "transaction_item_id_idx", columnList = "item_id")
     }
 )
+@Setter
 @Getter
 @Builder
 @NoArgsConstructor
@@ -51,10 +53,6 @@ public class TransactionEntity {
 
     @Column(name = "item_id", nullable = false)
     private Long itemId;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "item_type", nullable = false)
-    private ItemType itemType;
 
     @Column(name = "username")
     private String username;

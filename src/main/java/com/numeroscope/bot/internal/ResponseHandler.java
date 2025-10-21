@@ -2,9 +2,11 @@ package com.numeroscope.bot.internal;
 
 
 import com.numeroscope.bot.TransactionDto;
+import com.numeroscope.bot.TransactionStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.abilitybots.api.db.DBContext;
 import org.telegram.abilitybots.api.sender.SilentSender;
+import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery;
 import org.telegram.telegrambots.meta.api.methods.invoices.SendInvoice;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -82,10 +84,9 @@ public class ResponseHandler {
         final var price = recipe.getPrice();
 
         eventPublisher.publishTransaction(TransactionDto.builder()
-            .status(TransactionDto.TransactionStatus.PENDING)
+            .status(TransactionStatus.PENDING)
             .transactionAmount(Long.valueOf(price))
             .itemId(recipe.getId())
-            .itemType(TransactionDto.ItemType.DISH_RECIPE)
             .transactionCurrency(currency)
             .uuid(transactionId)
             .username(update.getMessage().getFrom().getUserName())
@@ -97,7 +98,7 @@ public class ResponseHandler {
             .price(new LabeledPrice(recipe.getUniqueName(), price))
             .title(recipe.getUniqueName())
             .description(recipe.getDescription())
-            .payload(transactionId.toString())
+            .payload(transactionId + ";" + recipe.getId())
             .photoUrl(recipe.getImageUrl())
             .startParameter("startParameter")
             .photoWidth(512)
@@ -124,5 +125,40 @@ public class ResponseHandler {
             .build();
         sender.execute(message);
 
+    }
+
+    public void replyToPreCheckout(Update upd) {
+
+        final var queryId = upd.getPreCheckoutQuery().getId();
+
+        final var query = AnswerPreCheckoutQuery.builder()
+            .preCheckoutQueryId(queryId)
+            .ok(true)
+            .build();
+
+        sender.execute(query);
+    }
+
+    public void replyToSuccessPayment(Update upd) {
+        final var chatId = upd.getMessage().getChatId();
+        final var payload = upd.getMessage().getSuccessfulPayment().getInvoicePayload();
+        final var dishId = payload.split(";")[1];
+        final var transactionId = payload.split(";")[0];
+
+        eventPublisher.updateTransactionStatus(transactionId, TransactionStatus.COMPLETED);
+
+        final var dishRecipeEntity = dishRecipeRepository.findById(Long.valueOf(dishId))
+            .orElseThrow(() -> new IllegalStateException("Dish not found"));
+
+        final var message = SendMessage.builder()
+            .chatId(chatId)
+            .text(
+                "Ingredients:" + System.lineSeparator() + dishRecipeEntity.getIngredients() + System.lineSeparator() +
+                "Recipe:" + System.lineSeparator() + dishRecipeEntity.getRecipe()
+            )
+            .parseMode("Markdown")
+            .build();
+
+        sender.execute(message);
     }
 }

@@ -7,13 +7,10 @@ import java.util.UUID;
 
 @Value
 @Builder
-public class TransactionDto {
+public class TransactionStatusUpdateDto {
 
     UUID uuid;
+
     TransactionStatus status;
-    Long transactionAmount;
-    String transactionCurrency;
-    Long itemId;
-    String username;
 
 }
